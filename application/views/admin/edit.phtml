@@ -1,0 +1,124 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/jquery.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+            <h2 class="font-light m-b-xs">账户编辑</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 right animated-panel zoomIn" style="animation-delay: 0.1s;">
+        <div style="text-align: right;margin-right: 40px;">
+            <button class="btn w-xs btn-info " onclick="toList()">账户列表</button>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="hpanel">
+            <div class="panel-body form-horizontal">
+                <div class="form-group"><label class="col-sm-2 control-label">手  机  号：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" placeholder="手机号" required="required" name="userName" id="userName"  {if (isset($info['userName']) && $info['userName']=='admin')}  disabled=disabled {/if} value="{if (isset($info['userName']))}{$info['userName']} {/if}">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">菜单：</label>
+                    <div class="form-check">
+                        {foreach from=$menuList1 item=info2}
+                                {if  isset($info['menu']) && in_array($info2._id,$info['menu'])}
+                                <input class="form-check-input invalidCheck2" checked type="checkbox"  value="{$info2._id}"  required>
+                                {else}
+                                <input class="form-check-input invalidCheck2" type="checkbox"  value="{$info2._id}"  required>
+                                {/if}
+                                <label class="form-check-label" for="invalidCheck2">
+                                    {$info2.menuName}
+                                </label>
+
+                        {/foreach}
+                     </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">功能：</label>
+                    <div class="form-check">
+                        {foreach from=$list item=info1}
+                                {if  isset($info['menu']) && in_array($info1._id,$info['menu'])}
+                                <input class="form-check-input invalidCheck2" checked type="checkbox"  value="{$info1._id}"  required>
+                                {else}
+                                  <input class="form-check-input invalidCheck2" type="checkbox"  value="{$info1._id}"  required>
+
+                                {/if}
+                                <label class="form-check-label" for="invalidCheck2">
+                                    {$info1.menuName}
+                                </label>
+                        {/foreach}
+                    </div>
+                </div>
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type='hidden' name="id" value="{$id}" id="editId">
+                    <button class="btn btn-info" onclick="checkInfo()"> 保存</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{include file="../layout/footer.phtml"}
+    {literal}
+<script>
+    function toList(){
+        location.href = "/admin/list";
+    }
+    function checkInfo() {
+        var userName = $.trim($('#userName').val());
+        var id = $.trim($('#editId').val());
+        if(!userName){
+            alert("登录名不能为空")
+            return false;
+        }
+        if(!regPhone(userName)){
+            alert('登录名必须是手机号');
+            return false;
+        }
+        var chekBoxObj=$(".invalidCheck2");
+        var len=chekBoxObj.length
+        var menu='';
+        for(var i=0; i<len; i++){
+            if(chekBoxObj.eq(i).prop("checked")){
+                menu+=chekBoxObj.eq(i).val() + ","
+            }
+        }
+        menu=menu.substr(0,menu.length-1);
+        $.ajax({
+            url:'/admin/save',
+            type:'post',
+            data: "userName="+userName+"&id="+id+"&menu="+menu,
+            async:false,
+            dataType:'json',
+            success:function(data){
+                if(data.status=="success"){
+                    alert(data.msg);
+                    location.href = data.url;
+                }else{
+                    alert(data.msg);
+                    return false;
+                }
+            }
+        });
+    }
+    function regPhone(phone){
+        var preg=/^1\d{10}$/
+        var sta=preg.test(phone);
+        if(!sta){
+            return false;
+        }else{
+            return phone;
+        }
+    }
+</script>
+    {/literal}

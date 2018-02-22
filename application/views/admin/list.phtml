@@ -1,0 +1,169 @@
+{include file="../layout/header.phtml"}
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    <li>
+                        <span>管理员列表</span>
+                    </li></ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                管理员列表            </h2>
+            <small>管理员列表</small>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="content" style="padding: 25px 40px 40px 10px">
+                <form role="search" class="form-inline" method="get" action="/admin/list">
+                    <!--                    <input type="hidden" name="active_id" value="0">-->
+                    <div class="form-group">
+                        <div>
+                            <label for="startTime">用户名：</label>
+                            <input type="text" class="form-control" name="userName" value="{$userName}">
+                        </div>
+                    </div>
+                    <button type="submit" name="search" class="btn btn btn-primary ">搜索</button>
+                </form>
+                <div style="text-align: right;margin-right: -30px;">
+                    <button class="btn w-xs btn-info " onclick="toCreate()">创建管理员</button>
+                </div>
+            </div>
+            <div class="hpanel">
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        <tr style="background: lavender;align: center;">
+                            <th>用户名</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        <tbody class="goods-body">
+                        {foreach from=$lists item=info}
+                        <tr class="tr-bd" >
+                            <td>{$info.userName}</td>
+                            <td>{$info.addTime}</td>
+                            <td>
+                                {if $info.userName!='admin'}
+                                <a href="/admin/edit?id={$info._id}">编辑</a>
+                                <a href="javascript:void(0)" onclick="delOne(this,'{$info._id}')">删除</a>
+                                {/if}</td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8 pull-right pages">
+            <span style="float:right">{$pages}</span>
+        </div>
+    </div>
+
+</div>
+
+{include file="../layout/footer.phtml"}
+<script language="JavaScript" type="text/javascript">
+    //删除数据
+    function delOne(event,id){
+        if(!id){
+            return false;
+        }
+
+        if(!confirm("您确定要删除吗？")){
+            return false;
+        }
+        $.ajax({
+            url:'/Admin/deluser',
+            type:'post',
+            data:'id='+id,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 'success') {
+                    $(event).parents("tr").remove();
+                    return
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+
+    }
+    function toCreate(){
+        location.href="/Admin/edit";
+    }
+    var totalPages;
+    var pageSize = 10;
+    $(function () {
+        $('#sTime,#fTime').datepicker();
+    });
+
+    function check(nickName,id) {
+        $('#tradeList').empty();
+        $('#pagination').empty();
+        $('#pagination').removeData("twbs-pagination");
+        $('#pagination').unbind('page');
+
+        getDetail(nickName,id,1);
+        //翻页效果
+        $('#pagination').twbsPagination({
+            totalPages: totalPages,
+            onPageClick: function (event, page) {
+                getDetail(nickName,id,page);
+            }
+        });
+        $('#Modal').modal();
+    }
+
+    function getDetail(nickName,id,page) {
+        $.ajax({
+            url:'/Trade/detail',
+            type:'post',
+            data:'orderId='+id+'&page='+page,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 'success'){
+                    var str = '';
+                    var pageStr ='';
+                    var count = data.count;
+                    $.each(data.data.info,function(i,item){
+                        str +=  '<tr class="tr-bd" >' + '<td title="'+nickName+'">'+nickName+'</td>'
+                            + '<td> ' + item.price + '</td>'
+                            + '<td> ' + item.currentTurnoverCount + '</td>'
+                            + '<td> ' + item.currentTotalprice + '</td>'
+                            + '<td> ' + item.addTime + '</td>'
+                            + '<td> ' + item.name + '</td></tr>';
+                    });
+                    $('#tradeList').html(str);
+                    if($.trim($('#pagination').html())==''){
+                        totalPages = Math.ceil(count/pageSize);
+                        if(totalPages>1){
+                            for(var i=1;i<=totalPages;i++){
+                                pageStr += '<li class="page"><a href="#">'+i+'</a></li>';
+                            }
+                            $('#pagination').html(pageStr);
+                        }
+                    }
+                }else{
+                    swal({
+                        title: "操作失败",
+                        text: "原因："+data.msg
+                    });
+
+                }
+            },
+            async:false
+        });
+
+    }
+</script>

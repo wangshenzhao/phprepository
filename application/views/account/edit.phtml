@@ -1,0 +1,144 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/jquery.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+            <h2 class="font-light m-b-xs">账户编辑</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 right animated-panel zoomIn" style="animation-delay: 0.1s;">
+        <div style="text-align: right;margin-right: 40px;">
+            <button class="btn w-xs btn-info " onclick="toList()">账户列表</button>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="hpanel">
+            <div class="panel-body form-horizontal">
+                <div class="form-group"><label class="col-sm-2 control-label">登  录  名：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" placeholder="手机号" required="required" name="userName" id="userName" value="{$info['userName']}">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">公司名称：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" placeholder="公司全称" value="{$info.company}" required="required" name="company" id="company">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">用户头像：</label>
+                    <div class="col-sm-6">
+                        <div class="form-group headImg" style="margin-left: -1px;">
+                            {include file="../layout/fileupload.phtml" isprivate="false" accept="image/*" file_type="image" progress="false" returnfieldid="headImg" thumbnail="false"}
+                            <input type="hidden" class="form-control" value="{if isset($info.headImg)}{$info.headImg}{/if}" id="headImg" name="picture_url">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">开户银行：</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" required="required" name="bank" id="bank">
+                            <option value="">--选择银行--</option>
+                            {foreach $bankList as $k=>$v }
+                            <option value="{$k}" {if $info['bank'] eq $k }selected="selected"{/if}>{$v}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">银行名称：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" placeholder="例：建设银行杭州拱宸桥支行" value="{$info.bankName}" required="required" name="bankName" id="bankName">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">银行账号：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" value="{$info.card}" required="required" name="card" id="card">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">打款金额：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" value="{$info.money}"  readonly="readonly"  required="required" name="money"  id="money">
+                    </div>
+                </div>
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type='hidden' name="id" value="{$id}" id="editId">
+                    <input type="hidden" id="YuserName"  value="{$info['userName']}" name="YuserName"/>
+                    <button class="btn btn-info" onclick="checkInfo()"> 保存</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="../layout/footer.phtml"}
+<script>
+    function toList(){
+        location.href = "/Account/list";
+    }
+    function checkInfo() {
+        var regNum = /^[0-9]*[1-9][0-9]*$/;
+        var userName = $.trim($('#userName').val());
+        var company =$.trim($('#company').val());
+        var bank = $.trim($('#bank').val());
+        var bankName = $.trim($('#bankName').val());
+        var card = $.trim($('#card').val());
+        var headImg = $('#headImg').val();
+        if(!userName){
+            alert("登录名不能为空")
+            return false;
+        }else {
+             if(!regNum.test(userName)||userName.length !=11){
+                 alert("请输入有效的手机号");
+                 return false;
+             }
+         }
+        if(!company){
+            alert("公司名称不能为空")
+            return false;
+        }
+        if(!headImg){
+            alert("请上传用户头像")
+            return false;
+        }
+        if(!bank){
+            alert("请选择银行")
+            return false;
+        }
+        if(!bankName){
+            alert("银行名称不能为空")
+            return false;
+        }
+        if(!card){
+            alert("银行账号不能为空")
+            return false;
+        }else{
+             if(!regNum.test(card)){
+                 alert("请输入有效的银行账号");
+                 return false;
+             }
+        }
+        $.ajax({
+            url:'/Account/doAccount',
+            type:'post',
+            async:false,
+            data:'userName='+userName+"&company="+company+"&headImg="+headImg+"&bank="+bank+"&bankName="+bankName+"&card="+card+"&id="+$('#editId').val()+"&YuserName="+$('#YuserName').val(),
+            dataType:'json',
+            success:function(data){
+                if(data.status=="success"){
+                    alert(data.msg);
+                    location.href = data.url;
+                }else{
+                    alert(data.msg);
+                    return false;
+                }
+            }
+        });
+    }
+</script>

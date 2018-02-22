@@ -1,0 +1,19 @@
+<input type="hidden" name="active_id" value="{$activeId}" id="active_id">
+<input type="hidden" name="tab_id" value="{$tid}" id="tab_id">
+</div>
+</body>
+</html>
+<script language='javascript'>
+    $(function () {
+        aid = $("#active_id").val();
+        tid = $("#tab_id").val();
+        $("#side-menu>li").each(function (i, n) {
+            if (i == aid) {
+                $(n).attr("class", "active");
+                $(n).find("ul").attr("class", "nav nav-second-level collapse in").attr("aria-expanded", "true").attr("style", "");
+                $(n).find("li").eq(tid).addClass("active").attr("style","background:#EEEEEE");
+            }
+        });
+
+    });
+</script>

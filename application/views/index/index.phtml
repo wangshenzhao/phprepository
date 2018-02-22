@@ -1,0 +1,41 @@
+{include file="../layout/header.phtml"}
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    <li><a href="#">用户列表</a></li>
+                </ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                用户列表            </h2>
+            <small>用户列表</small>
+        </div>
+    </div>
+</div>
+<div class="content animate-panel" style="padding-bottom: 0px;">
+    <div class="row" >
+        {foreach $placeList as $key=>$item}
+        <a href="{$item.placeUrl}?active_id=0&tid=0">
+            <div class="col-sm-2 place" >
+                <div class="hpanel" style="margin-top: 25px" >
+                    <div class="panel-body text-center">
+                            <img src="{$item.image}" style="width: 100%">
+                    </div>
+                    <div class="panel-footer text-center">
+                        {$item.placeName}
+                    </div>
+                </div>
+            </div>
+        </a>
+        {/foreach}
+    </div>
+</div>
+
+{include file="../layout/footer.phtml"}

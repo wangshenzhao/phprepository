@@ -1,0 +1,256 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/choiceCategory.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:10px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    <li>
+                        <span>帐户列表</span>
+                    </li></ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                帐户列表            </h2>
+            <small>帐户列表</small>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="content" style="padding: 5px 40px 40px 10px">
+                <div style="text-align: right;margin-right: -30px;">
+                    <button class="btn w-xs btn-info " onclick="toCreate('{$id}')">创建子账号</button>
+                </div>
+            </div>
+
+            <div class="hpanel">
+
+                <div class="panel-body">
+                    <table class="table table-bordered" >
+                        <tr style="background: lavender;">
+                            <th>用户名称</th>
+                            <th>开户时间</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        <tbody class="goods-body">
+                        {foreach from=$list item=info}
+                        <tr class="tr-bd" >
+                            <td  title="{$info.userName}">{$info.userName}
+                            </td>                            
+                            <td>
+                                {if isset($info.creatTime)}
+                                {$info.creatTime}
+                                {/if}
+                            </td>
+                            <td>{$info.remark}</td>
+                            <td>
+                                <span onclick=del('{$id}','{$info.userName}')>删除</span>
+                                <span><a   data-target="#myModal9" onclick="editModel('{$id}','{$info.userName}','{$info.remark}')">编辑</a></span>
+                                <span><a   data-target="#myModal8" onclick="changePassModel('{$id}','{$info.userName}')">重置密码</a></span>
+                            </td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div class="modal fade hmodal-info " id="myModal8" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="color-line"></div>
+            <div class="modal-header">
+                <h4 class="modal-title">重置密码</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" class="form-horizontal" id="pass">
+                    <div class="form-group"><label class="col-sm-4 control-label">用户名</label>
+                        <div class="col-sm-8" id="userName">
+
+                        </div>
+                        <input type="hidden" class="form-control" name="userName" value="">
+                        <input type="hidden" class="form-control" name="id" value="">
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group"><label class="col-sm-4 control-label">新密码</label>
+                        <div class="col-sm-8"><input type="password" class="form-control" name="password1"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group"><label class="col-sm-4 control-label">确认密码</label>
+                        <div class="col-sm-8"><input type="password" class="form-control" name="password2"></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="chanagePass();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade hmodal-info " id="myModal9" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="color-line"></div>
+            <div class="modal-header">
+                <h4 class="modal-title">编辑帐户</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" class="form-horizontal" id="change">
+                    <div class="form-group"><label class="col-sm-4 control-label">用户名</label>
+                        <div class="col-sm-8" >
+                            <input type="text" class="form-control" name="changeUserName" value="">
+                        </div>
+                        <input type="hidden" class="form-control" name="changeOldUserName" value="">
+                        <input type="hidden" class="form-control" name="changeId" value="">
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group"><label class="col-sm-4 control-label">备注</label>
+                        <div class="col-sm-8"><input type="text" class="form-control" name="changeRemark" ></div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="chanage();">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{include file="../layout/footer.phtml"}
+<script>
+    function toCreate(id){
+        location.href = "/Account/addchild?id="+id;
+    }
+    function del(id,userName){
+        $.ajax({
+            url:'/Account/delchild',
+            type:'post',
+            async:false,
+            data:'id='+id+'&userName='+userName,
+            dataType:'json',
+            success:function(data){
+                if(data.status=="success"){
+                    alert(data.msg);
+                    location.href = data.url;
+                }else{
+                    alert(data.msg);
+                    return false;
+                }
+            }
+        });
+    }
+    function editModel(id,userName,remark){
+
+        $(':input[name="changeUserName"]').val(userName);
+        $(':input[name="changeOldUserName"]').val(userName);
+        $(':input[name="changeId"]').val(id);
+        $(':input[name="changeRemark"]').val(remark);
+        $('#myModal9').modal();
+    }
+    function changePassModel(id,userName){
+        $('#userName').html(userName);
+        $(':input[name="userName"]').val(userName);
+        $(':input[name="id"]').val(id);
+        $(':input[name="password1"]').val('');
+        $(':input[name="password2"]').val('');
+        $('#myModal8').modal();
+    }
+    function chanage(){
+        var data = $('#change').serialize();
+        $.ajax({
+            url:'/Account/changeChild',
+            type:'post',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 'success'){
+                    toastr.options = {
+                        "positionClass": "toast-top-center",//弹出窗的位置
+                        "timeOut": "5000", //展现时间
+                    };
+                    toastr.info('操作成功');
+                    $('#myModal9').delay(30000);
+                    $('#myModal9').modal('hide');
+                }else{
+                    swal({
+                        title: "操作失败",
+                        text: "原因："+data.msg
+                    });
+
+                }
+            },
+            async:false
+        });
+    }
+    function chanagePass(){
+        var pass1 = $(':input[name="password1"]').val();
+        var pass2 = $(':input[name="password2"]').val();
+        if(pass1!=pass2){
+            alert("新密码和确认密码不一致");
+            return false;
+        }
+        if(pass1.length<6){
+            alert("密码至少需要6位");
+            return false;
+        }
+        var data = $('#pass').serialize();
+        $.ajax({
+            url:'/Account/changePass',
+            type:'post',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 'success'){
+                    toastr.options = {
+                        "positionClass": "toast-top-center",//弹出窗的位置
+                        "timeOut": "5000", //展现时间
+                    };
+                    toastr.info('操作成功');
+                    $('#myModal8').modal('hide');
+                }else{
+                    swal({
+                        title: "操作失败",
+                        text: "原因："+data.msg
+                    });
+
+                }
+            },
+            async:false
+        });
+
+    }
+
+    $('#myModal9,#myModal8').on('hide.bs.modal',
+        function() {
+            location.reload();
+//            $this.fadeOut(3000,function(){
+//                location.reload();
+//            })
+        })
+</script>

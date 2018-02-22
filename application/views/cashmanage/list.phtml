@@ -1,0 +1,248 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/choiceCategory.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    <li>
+                        <span>提现列表</span>
+                    </li></ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                提现列表            </h2>
+            <small>提现列表</small>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="content" style="padding: 25px 40px 40px 10px">
+                <form role="search" class="form-inline" method="get" action="/Cashmanage/list">
+                    <div class="form-group">
+                        <input type="hidden" name="active_id" value="0">
+                        <input type="hidden" name="tid" value="0">
+                        <label>用户名：</label>
+                        <input type="text" name="useName" class="form-control" placeholder="用户名" value="{if isset($userName)}{$userName}{/if}">
+
+                    </div>
+
+                    <button type="submit" name="search" class="btn btn btn-primary ">筛选</button>
+                </form>
+            </div>
+            <div class="" style="margin-bottom: 20px;">
+            {if $userId|getMatter:"Cashmanage":"examine"==true}
+                <button class="btn btn-success" id="batch_order">批量审核</button>
+            {/if}
+            </div>
+            <div style="margin-bottom: 5px;">【22：30~06:00】此时段为维护期，禁止审核</div>
+            <div class="hpanel">
+                <div class="panel-body">
+                    <table class="table table-bordered" >
+                        <tr style="background: lavender;">
+                            <th>
+                                <div class="icheckbox_square-green" id="choosAll"></ins></div>
+                            </th>
+                            <th>用户名称</th>
+                            <th>公司名称</th>
+                            <th>开户银行</th>
+                            <th>银行名称</th>
+                            <th>银行帐户</th>
+                            <th>开户时间</th>
+                            <th>充值余额(元)</th>
+                            <th>帐户可用(元)</th>
+                            <th>提现金额</th>
+                            <th>申请时间</th>
+                            <th>状态</th>
+                            <th>错误原因</th>
+                            <th>操作</th>
+                        </tr>
+                        <tbody class="goods-body">
+                        {foreach from=$lists item=info}
+                        <tr class="tr-bd" >
+                            <td>
+                            {if $userId|getMatter:"Cashmanage":"examine"==true}
+                                {if $info.status eq 1}
+                                <div style="position: relative;margin-top:-5px;" ids="{$info._id}" class="icheckbox_square-green" onclick="Bt_chooseMe(this);">
+                                    <ins class="iCheck-helper"></ins>
+                                </div>
+                                {/if}
+                            {/if}
+                            </td>
+                            <td  title="{$info.bankInfo.userName}">{$info.bankInfo.userName}
+                            </td>
+                            <td >{$info.bankInfo.company}</td>
+                            <td>{$bankList[$info.bankInfo.bank]}</td>
+                            <td title={$info.bankInfo.bankName}>{$info.bankInfo.bankName|smartTruncate:6}</td>
+                            <td>{$info.bankInfo.card}</td>
+                            <td>
+                                {if isset($info.bankInfo.createDate)}
+                                {$info.bankInfo.createDate}
+                                {/if}
+                            </td>
+                            <td>{$info.bankInfo.money}</td>
+                            <th>
+                                {if isset($info.bankInfo.userId)}
+                                {$info.bankInfo.userId|getBalanceInfo}
+                                {/if}
+                            </th>
+                            <td>{$info.applyCash}</td>
+                            <td>{$info.createDate}</td>
+                            <td>{$statusList[$info.status]}</td>
+                            <td>
+                                {if $info.status neq 3 and isset($info.err_msg)}
+                                    {$info.err_msg}
+                                {/if}
+                            </td>
+                            <td>
+                            {if $userId|getMatter:"Cashmanage":"examine"==true}
+                                {if $info.status eq 1}
+                                    <span class="btn btn-sm btn-success" style="margin: 2px;" onclick="examine('{$info._id}',{$info.applyCash},2);">审核</span>
+                                    <span class="btn btn-sm btn-success" style="margin: 2px;" onclick="examine('{$info._id}',{$info.applyCash},3);">线下打款</span>
+<!--                                <span type="button" class="btn-sm btn-danger" onclick="examine('{$info._id}',{$info.applyCash},3);">拒绝</span>-->
+                                {elseif $info.status eq 4}
+                                    <span class="btn btn-sm btn-success" style="margin: 2px;" onclick="examine('{$info._id}',{$info.applyCash},3);">线下打款</span>
+                                {/if}
+                            {/if}
+                            </td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8 pull-right pages">
+            <span style="float:right">{$pages}</span>
+        </div>
+    </div>
+
+</div>
+
+{include file="../layout/footer.phtml"}
+<script>
+    var Order_JS = {
+        init: function () {
+            this.Bt_chooseAll();
+            this.Bt_batch_order();
+        },
+        Bt_chooseAll: function () {
+            $("#choosAll").on("click", function () {
+                if ($(this).hasClass("checked")) {
+                    $(this).removeClass("checked");
+                } else {
+                    $(this).addClass("checked");
+                }
+                $(".icheckbox_square-green").each(function (i, n) {
+                    if (i > 0) {
+                        if ($(n).hasClass("checked")) {
+                            $(n).removeClass("checked");
+                        } else {
+                            $(n).addClass("checked");
+                        }
+                    }
+                });
+            });
+        }, //全选效果
+        Bt_batch_order: function () {
+            $("#batch_order").on("click", function () {
+                var str = '';
+                var status = 2;
+                $('.icheckbox_square-green.checked').each(function (i, n) {
+                    if ($(n).attr('ids')) {
+                        str += $(n).attr('ids') + ',';
+                    }
+                });
+                if (str.length > 0) {
+                    var data = {
+                        id: str,
+                        status:status
+                    };
+                    doExamine(data);
+                } else {
+                    swal({
+                        title: "请选择审批数据",
+                        text: "请选择要审批的数据",
+                        type: "warning",
+                        showCancelButton: true,
+                        cancelButtonText: "取消",
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "确定"
+                    });
+                }
+            });
+        }
+    };
+    Order_JS.init();
+    function Bt_chooseMe(obj) {
+        if ($(obj).hasClass("checked")) {
+            $(obj).removeClass("checked");
+        } else {
+            $(obj).addClass("checked");
+        }
+    }
+    function examine(id,applyCash,status) {
+        swal({
+                title: "审批金额为"+applyCash+"元?",
+                text: "是否要审批通过",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: false,
+                closeOnCancel: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    var data = {
+                        id: id + ',',
+                        status:status
+                    };
+                    doExamine(data);
+                }
+            }
+        );
+    }
+    function doExamine(data) {
+        $.ajax({
+            type: "POST",
+            url: '/Cashmanage/examine',
+            data: data,
+            dataType: 'json',
+            success: function (msg) {
+                if (msg.status == "success") {
+                    swal({
+                        title: msg.msg,
+                        type: "success"
+                    });
+                    location.reload();
+                }
+                if (msg.status == "failure") {
+                    swal({
+                        title: msg.msg,
+                        text:msg.text,
+                        type: "error"
+                    });
+                    return;
+                }
+                if (msg.status == "warning") {
+                    swal({
+                        title: msg.msg,
+                        type: "warning"
+                    });
+                    location.reload();
+                }
+            }
+        });
+    }
+</script>

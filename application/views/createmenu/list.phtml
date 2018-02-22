@@ -1,0 +1,101 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/choiceCategory.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:10px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+
+            <div id="hbreadcrumb" class="pull-right m-t-lg">
+                <ol class="hbreadcrumb breadcrumb">
+                    <li>
+                        <span>菜单列表</span>
+                    </li></ol>
+            </div>
+            <h2 class="font-light m-b-xs">
+                菜单列表            </h2>
+            <small>菜单列表</small>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="content" style="padding: 5px 40px 40px 10px">
+                <div style="text-align: right;margin-right: -30px;">
+                    <button class="btn w-xs btn-info " onclick="toCreate()">创建菜单</button>
+                </div>
+            </div>
+
+            <div class="hpanel">
+
+                <div class="panel-body">
+                    <table class="table table-bordered">
+                        <tr style="background: lavender;" >
+                            <th>菜单列表</th>
+                            <th>类名称</th>
+                            <th>方法名称</th>
+                            <th>菜单类型</th>
+                            <th>操作</th>
+                        </tr>
+                        <tbody class="goods-body">
+                        {foreach from=$lists item=info}
+                        <tr class="tr-bd" >
+                            <td >{$info.menuName}</td>
+                            <td>{$info.action}</td>
+                            <td>{$info.method}</td>
+                            <td>{if isset($info['stat']) && $info['stat']==1} 主菜单 {/if}</td>
+                            <td>
+                                <a href="/Createmenu/index?id={$info._id}">修改菜单</a>&nbsp;
+                                <a href="javascript:void(0)" onclick="OneDel(this,'{$info._id}')">删除菜单</a>&nbsp;
+                            </td>
+                        </tr>
+                        {/foreach}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8 pull-right pages">
+            <span style="float:right">{$pages}</span>
+        </div>
+    </div>
+
+</div>
+
+{include file="../layout/footer.phtml"}
+<script>
+    function toCreate(){
+        location.href = "/Createmenu/index";
+    }
+    function OneDel(event,id){
+        if(!id){
+            return false;
+        }
+
+        if(!confirm("您确定要删除吗？")){
+            return false;
+        }
+        $.ajax({
+            url:'/Createmenu/delmenu',
+            type:'post',
+            data:'id='+id,
+            dataType:'json',
+            success:function(data){
+                if(data.status == 'success') {
+                    $(event).parents("tr").remove();
+                    return
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+
+    }
+
+</script>

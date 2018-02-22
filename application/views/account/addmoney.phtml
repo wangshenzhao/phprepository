@@ -1,0 +1,96 @@
+{include file="../layout/header.phtml"}
+<script src="/public/js/jquery.js"></script>
+<div class="normalheader transition animated fadeIn" style="margin-bottom:30px;">
+    <div class="hpanel">
+        <div class="panel-body">
+            <a class="small-header-action" href="#">
+                <div class="clip-header">
+                    <i class="fa fa-arrow-up"></i>
+                </div>
+            </a>
+            <h2 class="font-light m-b-xs">账户充值</h2>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12 right animated-panel zoomIn" style="animation-delay: 0.1s;">
+        <div style="text-align: right;margin-right: 40px;">
+            <button class="btn w-xs btn-info " onclick="toList()">账户列表</button>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+        <div class="col-lg-12 animated-panel bounceIn animate" style="animation-delay: 0.2s;">
+            <div class="hpanel">
+            <div class="panel-body form-horizontal">
+                <div class="form-group"><label class="col-sm-2 control-label">登  录  名：</label>
+                    <div class="col-sm-6">
+                        {$info['userName']}
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">累计充值金额：</label>
+                    <div class="col-sm-6">
+                        {$info.money}
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">可用余额：</label>
+                    <div class="col-sm-6">
+                        {if isset($info.userId)}
+                            {$info.userId|getBalanceInfo}
+                        {/if}
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">充值金额：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="required pattern form-control m-b" placeholder="请输入数字" value="" required="required" name="money" id="money">
+                    </div>
+                </div>
+
+                <div class="col-sm-8 col-sm-offset-2">
+                    <input type='hidden' name="id" value="{$id}" id="editId">
+                    <button class="btn btn-info" onclick="checkInfo()"> 保存</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="../layout/footer.phtml"}
+<script>
+    function toList(){
+        location.href = "/Account/list";
+    }
+    function checkInfo() {
+        var regMoney = /^(-?\d+)(\.\d+)?$/;
+        var money = $.trim($('#money').val());
+
+        if(!money){
+            alert("打款金额不能为空")
+            return false;
+        }else{
+             if(!regMoney.test(money)){
+                 alert("打款金额格式错误");
+                 return false;
+             }else {
+                $.ajax({
+                    url:'/Account/doAddMoney',
+                    type:'post',
+                    async:false,
+                    data:"money="+money+'&id='+$('#editId').val(),
+                    dataType:'json',
+                    success:function(data){
+                        if(data.status=="success"){
+                            alert(data.msg);
+                            location.href = data.url;
+                        }else{
+                            alert(data.msg);
+                            return false;
+                        }
+                    }
+                });
+             }
+        }
+    }
+</script>

@@ -1,0 +1,67 @@
+<div class="marginLeft" style="margin-left:-94px;">
+    <div class="fileupload-panel" id="fileupload-panel-{$returnfieldid}" style="margin-left: 97px; ">
+        <div class="thumbnail-list" style="float:left;display: none;margin-bottom:.5em;">
+            <div class="clearFix"></div>
+        </div>
+        <input type="file" id="myFile-{$returnfieldid}" accept="{$accept}" name="myFile-{$returnfieldid}" style="float:left;width:60px;height:60px;display: none;"/>
+        <div style="float:left;">
+            <div class="marginstyle">
+                <div class="thumbnail-wapper" style="float:left;">
+                    <div  style="width:100px;text-align:center;font-size:4em;line-height:1.25em;color:black;border: 1px solid #ccc;">
+                        <div class="hand" style="height:75px;background-repeat:no-repeat;background-position-y: center;background-size: 100% 100%;cursor:pointer;background-image:url('/public/images/lotu.jpg');">
+                            <div id="upload-{$returnfieldid}" style="line-height:75px;">+</div>
+                        </div>
+                        <div style="font-size: 12px;line-height: 30px;display: none" id="otherOption-{$returnfieldid}">
+                            <div style="background: #e4e5e7;height:30px;">
+                                <div style="float: left;width: 50%;border-right: 1px solid #ccc;height: 30px; cursor:pointer;">
+                                    <p id="baseUpload-{$returnfieldid}" >本地</p>
+                                </div>
+                                <div style="float: left;width: 50%;height: 30px;cursor:pointer; ">
+                                    <p id="historyUpload-{$returnfieldid}">历史</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+<!--                    <div class="img-thumbnails" style="background-repeat:no-repeat;height:100px;width:100px;background-size: 100% 100%;display:none;background-position-y: center;">-->
+<!--                    </div>-->
+                    	<div class="clearFix"></div>
+                </div>
+<!--                <div style="float:left;margin-left:10px;margin-top:115px;" >-->
+<!--                    <button class="btn btn-success"  type="button" id="upload-{$returnfieldid}"><i class="fa fa-upload"></i><span class="bold">上传文件</span></button>-->
+<!--                </div>-->
+                <div class="clearFix"></div>
+            </div>
+            <div class="clearFix"></div>
+			<progress id="prog-{$returnfieldid}" value="0" min="0" max="100" class="progress-small" style="background:#F9F9F9;width:100px;margin-bottom:5px 0px 5px 0px"></progress>
+        </div>
+		<div class="clearFix"></div>
+    </div>
+</div>
+    <script type="text/javascript" src="/public/js/utils/fileupload.js"></script>
+    <script type="text/javascript" src="/public/js/utils/tvmUpload.js"></script>
+    <script>
+    
+        var rId = '{$returnfieldid}';
+        console.log("{$returnfieldid} is ",rId);
+        var isMulti = '{$multi|default:"[multi]"}';
+        var minsize = '{$minsize|default:"[minsize]"}';
+        var isprivate = '{$isprivate|default:"[isprivate]"}';
+        var thumbnail = '{$thumbnail|default:"[thumbnail]"}';
+        var img_min_height = '{$img_min_height|default:"[img_min_height]"}';
+        var img_min_width = '{$img_min_width|default:"[img_min_width]"}';
+        var imgsize = '{$imgsize|default:"[imgsize]"}';
+        var file_type = '{$file_type|default:"[file_type]"}';
+        var ismaterial = '{$ismaterial|default:"[ismaterial]"}';
+        var materialtype = '{$materialtype|default:"[materialtype]"}';
+        var maxsize = '{$maxsize|default:"[maxsize]"}';
+        var configInfo ={
+            "imgsize":imgsize,
+            "maxsize":maxsize
+        };
+        if(img_min_height&&img_min_width){
+            $(".img-thumbnails").css('height',img_min_height);
+            $(".img-thumbnails").css('width',img_min_width);
+        }
+        tvmUpload.init(rId,isMulti,minsize,file_type,img_min_height,img_min_width,ismaterial,materialtype,configInfo);
+    </script>

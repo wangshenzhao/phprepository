@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{$title}</title>
+        <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+        <meta HTTP-EQUIV="Cache-Control" CONTENT="no-store">
+        <meta HTTP-EQUIV="Expires" CONTENT="0">
+        <link rel="stylesheet" href="/public/vendor/fontawesome/css/font-awesome.css"/>
+        <link rel="stylesheet" href="/public/vendor/metisMenu/dist/metisMenu.css"/>
+        <link rel="stylesheet" href="/public/vendor/animate.css/animate.css"/>
+        <link rel="stylesheet" href="/public/vendor/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="/public/vendor/xeditable/bootstrap3-editable/css/bootstrap-editable.css"/>
+        <link rel="stylesheet" href="/public/vendor/select2-3.5.2/select2.css"/>
+        <link rel="stylesheet" href="/public/vendor/select2-bootstrap/select2-bootstrap.css"/>
+        <link rel="stylesheet" href="/public/vendor/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css"/>
+        <link rel="stylesheet" href="/public/vendor/bootstrap-datepicker-master/dist/css/bootstrap-datepicker3.min.css"/>
+        <link rel="stylesheet" href="/public/vendor/sweetalert/lib/sweet-alert.css"/>
+        <link rel="stylesheet" href="/public/vendor/toastr/build/toastr.min.css"/>
+        <link rel="stylesheet" href="/public/css/fonts/pe-icon-7-stroke/css/pe-icon-7-stroke.css" />
+        <!-- App styles -->
+        <link rel="stylesheet" href="/public/css/bootstrap.css">
+        <link rel="stylesheet" href="/public/css/style.css">
+        <link rel="stylesheet" href="/public/css/page.css"/>
+        <script src="/public/vendor/jquery/dist/jquery.min.js"></script>
+        <script src="/public/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/public/vendor/jquery-ui/jquery-ui.min.js"></script>
+        <script src="/public/vendor/slimScroll/jquery.slimscroll.min.js"></script>
+        <script src="/public/vendor/metisMenu/dist/metisMenu.min.js"></script>
+        <script src="/public/vendor/iCheck/icheck.min.js"></script>
+        <script src="/public/vendor/sparkline/index.js"></script>
+        <script src="/public/vendor/moment/moment.js"></script>
+        <script src="/public/vendor/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
+        <script src="/public/vendor/xeditable/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+        <script src="/public/vendor/select2-3.5.2/select2.min.js"></script>
+        <script src="/public/vendor/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js"></script>
+        <script src="/public/vendor/sweetalert/lib/sweet-alert.min.js"></script>
+        <script src="/public/vendor/toastr/build/toastr.min.js"></script>
+		<script src="/public/js/jquery.js"></script>
+        <script src="/public/scripts/jquery.twbsPagination.min.js"></script>
+        
+    </head>
+    <body >
+        <!-- Header -->
+        <div id="header">
+            <div class="color-line">
+            </div>
+<!--            <div id="logo" class="light-version">-->
+<!--                <span>考评系统</span>-->
+<!--            </div>-->
+            <nav role="navigation">
+                <a href="/Index/index">
+                    <div class="header-link " ><i class="glyphicon glyphicon-home"></i></div>
+                </a>
+
+                <div class="navbar-brand">
+                    <span>管理系统 </span>
+                </div>
+
+           
+
+                <div class="navbar-right">
+                    <ul class="nav navbar-nav no-borders">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle label-menu-corner" href="" title="查看用户信息">
+                                <i style="font-size:16px;font-style: normal;">用户名:{$adminUserName}</i>
+                            </a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="/Login/logout">
+                                <i class="pe-7s-upload pe-rotate-90"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <aside id="menu">
+            <div id="navigation">
+                <ul class="nav" id="side-menu">
+                    <li>
+                        <a href="#"><span class="nav-label">用户管理</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            {foreach from=$menuList item=info}
+                                {if isset($info['stat']) && $info['stat']==1}
+                                    <li ><a href="/{$info['action']}/{$info['method']}?active_id=1&tid=0">{$info['menuName']}</a></li>
+                                {/if}
+                            {/foreach}
+
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+        <div id="wrapper">
+           
+
